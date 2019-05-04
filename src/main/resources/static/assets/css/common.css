@@ -1,0 +1,84 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+html, body, .container {
+    height: 100%;
+}
+
+.container {
+    padding-top: 20px;
+}
+
+/*main-judge.html*/
+.main-judge-container {
+    padding-top: 20px;
+    margin:0 auto;
+}
+
+/*main_judge.html*/
+.btn-left{
+    margin-left:40px;
+}
+
+/*red_song.html*/
+.red-song-main-division{
+    /*
+    height:420px;
+    width:1107px;
+    */
+    margin-top: 25px;
+    height:53px;
+    width: 340px;
+    float: left;
+    vertical-align:middle;
+    line-height:53px;
+    /*background:url(../images/voice_play.png);*/
+}
+
+/*red_song.html*/
+audio{
+    height:45px;
+    width:260px;
+    float: left;
+}
+
+/*red_song.html*/
+.red-song-btn{
+    height: 45px;
+    width: 45px;
+    float: left;
+    /*改变按钮的形状：圆形*/
+    border-radius: 50%;
+}
+/*:hover 选择器来修改鼠标悬停在按钮上的样式。*/
+/*
+.red-song-btn:hover {background-color: #d0c1d4;}
+*/
+/*red_song.html*/
+.change-color{
+    background-color:#FFB755;
+}
+
+/*字体*/
+.font{
+    font_weight:border;
+    font-size:50px;
+}
+
+.div-height{
+    height:70px;
+    width:auto;
+}
+.span-setting{
+    margin-left: 150px;
+    margin-right: 150px;
+    width:auto;
+}
+
+/*quickly_answer.html*/
+.ul-class{
+    width: 240px;
+}

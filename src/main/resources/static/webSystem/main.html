@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>主页</title>
+  <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/pc-style.css" rel="stylesheet" type="text/css">
+  <script src="/assets/js/jquery-3.1.1.min.js"></script>
+</head>
+<body class="bg-index">
+  <div id="choose-container" align="center">
+    <button class="choose-btn" id="required-questions">必答题</button><br>
+    <input class="choose-btn" type="button" id="red-song" value="红歌竞猜"/><br>
+    <input class="choose-btn" type="button" id="red-quick-answer" value="抢答题"/><br>
+    <!--<button class="choose-btn" id="red-song">红歌竞猜</button><br>-->
+    <!--<button class="choose-btn" id="quick-answer">抢答题</button><br>-->
+    <button class="choose-btn" id="match-rule">比赛规则</button>
+  </div>
+
+<script>
+  $(function () {
+      //必答题主要
+      $("#required-questions").click(function () {
+           window.location.href = "/webSystem/required/required_index.html";
+      });
+
+      $("input").click(function(){
+          $.ajax({
+                url : "/question/putOneRule",
+                type:"POST",
+                data : {
+                    type : this.value
+                },
+                success : function () {
+                    window.location.href = "/webSystem/match_rule/match_rule_other.html";
+                }
+          })
+      })
+
+      //跳转到比赛规则
+      $("#match-rule").click(function () {
+           window.location.href = "/webSystem/match_rule/match_rule_total.html";
+      });
+
+  })
+</script>
+</body>
+</html>

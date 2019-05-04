@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="full-screen" content="yes">
+    <title>比赛规则</title>
+    <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/pc-style.css" rel="stylesheet" type="text/css">
+    <script src="/assets/js/jquery-3.1.1.min.js"></script>
+    <script src="/bootsrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/vue.min.js"></script>
+</head>
+<body class="main-judge-bg">
+<div class="main-judge-container">
+    <!--<div class="pull-left" id="question">-->
+    <div id="question">
+        <div class="bg-white" id="question-msg">
+            <h1 class="text-center">比赛规则</h1>
+            <span class="clearfix"></span>
+        </div>
+
+        <div id="question-title">
+            <p align="left">
+                {{type}}：{{rule}}<br>
+            </p>
+        </div>
+
+        <div id="question-option" >
+            <div class="col-sm-12 next-question" style="margin-bottom: 10px; padding-left: 20px">
+                <input class="btn btn-lg btn-left" type="button" id="start" value="开始答题"/>
+                <button class="btn btn-lg btn-left" id="main-btn">主页</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+
+        //开始答题
+        $("#start").click(function () {
+            if(content.type=="红歌竞猜"){
+                window.location.href="/webSystem/red_song.html";
+            }else if(content.type=="抢答题"){
+                $.ajax({
+                    url : "/question/putQuestion",
+                    data : {
+                        type : content.type
+                    },
+                    success : function (result) {
+                        if(result==true){
+                            window.location.href = "/webSystem/quickly_answer.html";
+                        }else{
+                            alert("填充题目失败");
+                        }
+                    }
+                })
+            }else{  //其他题型
+                $.ajax({
+                    url : "/question/putQuestion",
+                    data : {
+                        type : content.type
+                    },
+                    success : function (result) {
+                        if(result==true){
+                            window.location.href = "/webSystem/required/required_main.html";
+                        }else{
+                            alert("填充题目失败");
+                        }
+                    }
+                })
+            }
+        });
+
+        //返回主页
+        $("#main-btn").click(function(){
+            window.location.href = "/webSystem/main.html";
+        });
+
+        var content=new Vue({
+            el : "#question-title",
+            data:{
+                type:'',
+                rule:''
+            },
+            methods:{
+                getRule : function(){
+                    $.getJSON("/question/getOneRule",function(result){
+                        if(result!=null){
+                            content.type=result.type;
+                            content.rule=result.rule;
+                        }
+                    })
+                }
+            }
+        })
+
+        content.getRule();
+
+    })
+
+</script>
+</body>
+</html>

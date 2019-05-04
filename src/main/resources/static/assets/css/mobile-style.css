@@ -1,0 +1,35 @@
+body {
+    background-image: url("/images/mobile-bg.jpg");
+    background-size: 100% auto;
+    /*background-color: yellow;*/
+}
+
+#team-info {
+    margin: 20px auto;
+    height: 150px;
+}
+
+#message {
+    padding: 10px;
+    height: 40%;
+    font-size: large;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+#message-box {
+    margin-top: 200px;
+}
+
+#answer-btn {
+    margin: 0 auto;
+    border-radius: 75px;
+    width: 150px;
+    height: 150px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    font-size: 30px;
+    font-weight: bolder;
+    color: gray;
+}

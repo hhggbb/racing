@@ -1,0 +1,218 @@
+.bg-main {
+    background: url("/images/main-bg.jpg");
+    background-size: 100% auto;
+}
+/*必答题body*/
+.main-judge-bg {
+    background: url("/images/main-bg.jpg");
+    background-size: 100% auto;
+    text-align:center;
+}
+
+/*红歌竞猜.html*/
+.red-song-bg {
+    background: url("/images/red-song-bg.jpg");
+    background-size: 100% auto;
+    text-align:center;
+}
+
+.bg-index {
+    /*background: url("/images/index-bg.jpg");*/
+    /*background-size: auto 100%;*/
+    padding-top: 20px;
+    /*background-color: gray;*/
+    background: url("/images/index-bg.jpg");
+}
+
+/*欢迎界面*/
+#index-container {
+    margin: 20px auto;
+    padding-top: 200px;
+    width: 960px;
+    height: 662px;
+    /*background: url("/images/index-bg.jpg");*/
+    background-size: cover;
+}
+
+/*choose.html的界面*/
+#choose-container {
+    margin: 20px auto;
+    padding-top: 50px;
+    width: 960px;
+    height: 662px;
+    /*background: url("/images/index-bg.jpg");*/
+    background-size: cover;
+}
+
+#racing-name {
+    font-size: 45px;
+    font-weight: bolder;
+    color : red;
+}
+
+/*
+#start-btn, #setting-btn {
+    margin-top: 10px;
+    height: 80px;
+    font-size: 20px;
+    font-weight: bold;
+    color: dimgray;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+*/
+
+/*webSystem的首页*/
+#start-btn {
+    margin-top: 10px;
+    margin-left:365px;
+    height: 80px;
+    width: 242px;
+    font-size: 20px;
+    font-weight: bold;
+    color: dimgray;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/*choose.html的按钮*/
+.choose-btn {
+    margin-top: 10px;
+    height: 70px;
+    width: 242px;
+    font-size: 20px;
+    font-weight: bold;
+    color: dimgray;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+#start-btn:hover, #setting-btn:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/*main_judge.html答题界面*/
+#question {
+    width: -moz-calc(100% - 260px);
+    width: -webkit-calc(100% - 260px);
+    width: calc(100% - 260px);
+    margin:0 auto;
+}
+
+#question-msg div{
+    margin-bottom: 0;
+}
+
+.progress {
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+#question-title{
+    margin-top: 10px;
+    min-height: 200px;
+    text-align: left;
+}
+
+/*red_song.html*/
+#red-song-main{
+    margin-top: 10px;
+    height: 410px;
+}
+.question-option {
+    margin-top: 10px;
+    min-height: 300px;
+}
+/* main_judge.html */
+.judge-question-option {
+    text-align:left;
+    margin-top: 10px;
+    min-height: 300px;
+}
+
+#question-msg, #question-title,#red-song-main, .question-option, .judge-question-option ,.question-option-choice, .next-question, #answerer {
+    font-size: x-large;
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/*其他题型*/
+.question-option .msg {
+    text-align: center;
+    line-height: 250px;
+    cursor: pointer;
+}
+
+/*选择题选项*/
+.question-option-choice {
+    margin-top: 10px;
+    border: 1px white solid;
+    width: 100%;
+    height: 50px;
+    line-height: 30px;
+    list-style: none;
+    cursor: pointer;
+}
+
+/*required_single_choice.html 选项 文字左对齐*/
+.left{
+    text-align: left;
+}
+.question-option-choice:hover, .question-option:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+.question-option-choice-active {
+    border: 3px red solid;
+}
+
+/*右侧*/
+#r-side {
+    margin-top:100px;
+    width: 250px;
+}
+
+#message {
+    padding: 10px;
+    height: 200px;
+    position: relative;
+    overflow: auto;
+}
+
+#message ul {
+    min-height: 180px;
+    position: absolute;
+    bottom: 0px;
+}
+
+#message li {
+    list-style: none;
+}
+
+#answerer {
+    height: 100px;
+}
+
+#controller {
+    margin: 15px 0;
+}
+
+#message, #answerer, table {
+    margin-bottom: 10px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#message-title h4 {
+    border-bottom: 2px rgba(0, 0, 0, 0.2) dotted;
+    padding: 8px 0;
+    margin: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+th {
+    text-align: center;
+}
+
+/*非选择题答题模态框*/
+#post-answer-tool .button {
+    width: 100px;
+    height: 100px;
+}

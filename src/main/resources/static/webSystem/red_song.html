@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="full-screen" content="yes">
+    <title>红歌竞猜</title>
+    <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/pc-style.css" rel="stylesheet" type="text/css">
+    <script src="/assets/js/jquery-3.1.1.min.js"></script>
+    <script src="/bootsrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/vue.min.js"></script>
+</head>
+<body class="red-song-bg">
+<div class="main-judge-container">
+    <!--<div class="pull-left" id="question">-->
+    <div id="question">
+        <div class="bg-white" id="question-msg">
+            <h1 class="text-center">红歌竞猜</h1>
+            <span class="clearfix"></span>
+        </div>
+
+        <div id="red-song-main" align="center">
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn1">1</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn2">2</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn3">3</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn4">4</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn5">5</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn6">6</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn7">7</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn8">8</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn9">9</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn10">10</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn11">11</button>
+                <audio controls="controls"></audio>
+            </div>
+            <div class="red-song-main-division">
+                <button class="red-song-btn" id="btn12">12</button>
+                <audio controls="controls"></audio>
+            </div>
+        </div>
+
+        <div id="question-option">
+            <div class="col-sm-12 next-question" style="margin-bottom: 10px; padding-left: 20px">
+                <button class="btn btn-lg btn-left" id="more">更多</button>
+                <button class="btn btn-lg btn-left" id="main-btn">返回</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--答案提示框-->
+<div class="modal fade " id="message-box" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                {{ title }}
+            </div>
+            <div class="modal-body text-center">
+                <h1 class="text-center">{{ msg }}</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+
+        //获取红歌
+        var redSong = new Vue({
+            data:{
+                rSong:[ ],
+                rSongName:[],
+                rSongNameSrc:[]
+            },
+            methods:{
+                //获取红歌名字，用于显示答案
+                getSongName : function(e){
+                    $.getJSON("/question/getRedSongs", function(result){
+                        if(result!=null){
+                            this.rSong=result;
+                            var title="答案";
+                            for(var i=0;i<this.rSong.length;i++){
+                                //剪掉当前事件id（e.target.id）的前三个字符
+                                var temp=e.target.id.substring(3);
+                                if(this.rSong[i].id==temp){
+                                    //如果符合条件，弹出答案显示框
+                                    messageBox.show(title,this.rSong[i].name);
+                                    break;
+                                }
+                            }
+                        }
+                    })
+                },
+                //获取红歌src名字，用于路径的存放
+                getSongNameSrc : function(){
+                    $.getJSON("/question/getRedSongs", function(result){
+                        if(result!=null){
+                            this.rSong=result;
+                            //前缀
+                            var prefix="../assets/redSong";
+                            //后缀
+                            var suffix=".mp3";
+                            //$("audio").length audio标签的长度
+                            for(var i=0;i<$("audio").length;i++){
+                                $("audio:eq("+i+")").attr("src",prefix+"/"+this.rSong[i].nameSrc+suffix);
+                            }
+                        }
+                    })
+                }
+
+            }
+        });
+
+        //开始 加载歌曲路径
+        redSong.getSongNameSrc();
+
+        //答案提示框
+        var messageBox = new Vue({
+            el : "#message-box",
+            data : {
+                title : "",
+                msg : ""
+            },
+            methods : {
+                show : function (title, msg) {
+                    this.title = title;
+                    this.msg = msg;
+                    $("#message-box").modal("show");
+                }
+            }
+        });
+
+        /**
+          $("input[id^='code']");//id属性以code开始的所有input标签
+          $("input[id$='code']");//id属性以code结束的所有input标签
+          class属性以red-song-btn开始的所有button标签
+        */
+        $("button[class^='red-song-btn']").click(function(e){
+            //尽量使用event.target.id，不要使用this.id。
+            //当使用事件委托的时候，this指向的是绑定监听事件的元素，而非被点击的元素。event.target.id则始终指向被点击的元素。
+            $(this).addClass("change-color");
+            //调用函数
+            redSong.getSongName(e);
+
+        });
+
+        //‘返回按钮跳转’
+        $("#main-btn").click(function(){
+            window.location.href = "/webSystem/main.html";
+        });
+
+        //"更多"按钮跳转
+        $("#more").click(function(){
+            window.location.href = "/webSystem/red_song_2.html";
+        });
+    })
+
+
+</script>
+</body>
+</html>

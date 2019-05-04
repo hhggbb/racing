@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>首页</title>
+  <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/pc-style.css" rel="stylesheet" type="text/css">
+  <script src="/assets/js/jquery-3.1.1.min.js"></script>
+</head>
+<body class="bg-index">
+<!--<div id="index-container">-->
+  <div id="index-container" align="center">
+    <!--<p class="text-center" id="racing-name">广东科学技术职业学院<br>人文学院 - 计算机学院<br>党知识竞赛决赛(抢答题)</p>-->
+    <p class="text-center" id="racing-name">广东科学技术职业学院<br>党知识竞赛</p>
+    <button class="col-sm-offset-2 col-sm-3" id="start-btn">主页</button>
+  </div>
+
+<script>
+  $(function () {
+      $("#start-btn").click(function () {
+          window.location.href = "/webSystem/main.html";
+      })
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="full-screen" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
+    <title>进入竞赛</title>
+    <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/mobile-style.css" rel="stylesheet" type="text/css">
+    <script src="/assets/js/jquery-3.1.1.min.js"></script>
+    <script src="/assets/js/vue.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="team-info">
+            <h1 class="text-center">请输入团队名</h1>
+        </div>
+        <div>
+            <!-- v-model 双向绑定name -->
+            <input class="form-control" v-model="name" style="text-align:center"/><br>
+            <button class="btn btn-lg btn-default center-block" id="submit-btn" type="button">提交</button>
+        </div>
+
+    </div>
+
+<script>
+    $(function () {
+
+        var o = new Vue({
+            el: ".container",
+            data : {
+                name : ''
+            }
+        })
+
+        $("#submit-btn").click(function () {
+            $.ajax({
+                url : "/answer2/insertTeam",
+                type:"POST",
+                data : {
+                    name : o.name
+                },
+                success : function (result) {
+                    if(result==true){
+                        window.location.href = "/answer/main.html";
+                    }
+                }
+            })
+        });
+
+    })
+</script>
+</body>
+</html>

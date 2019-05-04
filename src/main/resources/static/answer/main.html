@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
+    <title>抢答器</title>
+    <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/mobile-style.css" rel="stylesheet" type="text/css">
+    <script src="/assets/js/jquery-3.1.1.min.js"></script>
+    <script src="/bootsrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/vue.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center" id="head">答题者 ： {{ name }}</h1>
+    <div id="message">
+        {{ id }}、{{ message }}
+    </div>
+    <div class="controller">
+        <button class="btn btn-default" id="answer-btn" type="button" data-toggle="modal">抢答</button>
+    </div>
+
+    <div class="modal fade" id="message-box" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-center">抢答结果</h3>
+                </div>
+                <div class="modal-body text-center">
+                    {{ result }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function(){
+
+        var messageEl=new Vue({
+            el:"#message",
+            data:{
+                id:'',
+                message:''
+            },
+            methods:{
+                //获取题目
+                getTitle : function(){
+                    $.getJSON("/question/getQuicklyAnswer",function(data){
+                        if(data!=null){
+                            messageEl.id=data.id;
+                            messageEl.message=data.title;
+                        }
+                    })
+                },
+                getAnswerName : function(){
+                    $.getJSON("/answer2/getAnswerName",function(data){
+                        if(data!=null){
+                            head.name=data.msg;
+                        }
+                    })
+                }
+            }
+        })
+        //获取当前的题目
+        setInterval(messageEl.getTitle,1000);
+        //获取参赛者名字
+        messageEl.getAnswerName();
+
+        var messageBox=new Vue({
+            el:"#message-box",
+            data:{
+                result:"暂无内容"
+            }
+        })
+
+        $("#answer-btn").click(function () {
+            $.ajax({
+                url : "/answer2/answer",
+                type:"POST",
+                data : {
+                    name:head.name
+                },
+                success : function (data) {
+                    $("#message-box").modal("show");
+                    messageBox.result=data;
+                }
+            })
+        });
+
+        var head = new Vue({
+            el:"#head",
+            data:{
+                name:""
+            }
+        })
+
+    })
+</script>
+</body>
+</html>

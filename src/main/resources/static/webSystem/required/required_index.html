@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>必答题选择</title>
+  <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/pc-style.css" rel="stylesheet" type="text/css">
+  <script src="/assets/js/jquery-3.1.1.min.js"></script>
+</head>
+<body class="bg-index">
+  <div id="choose-container" align="center">
+    <input class="choose-btn" type="button" id="judge" value="判断题"/><br>
+    <input class="choose-btn" type="button" id="single" value="单选题"/><br>
+    <input class="choose-btn" type="button" id="multiple-choice" value="多选题"/><br>
+    <input class="choose-btn" type="button" id="short-answer" value="简答题"/><br>
+    <button class="choose-btn" id="main">主页</button>
+  </div>
+
+<script>
+  $(function () {
+
+      $("input").click(function(){
+          $.ajax({
+                url : "/question/putOneRule",
+                type:"POST",
+                data : {
+                    type : this.value
+                },
+                success : function () {
+                    window.location.href = "/webSystem/match_rule/match_rule_other.html";
+                }
+          })
+      })
+
+      $("#main").click(function(){
+          window.location.href="/webSystem/main.html";
+      })
+  })
+</script>
+</body>
+</html>

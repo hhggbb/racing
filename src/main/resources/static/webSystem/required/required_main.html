@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="full-screen" content="yes">
+    <title>必答题</title>
+    <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/pc-style.css" rel="stylesheet" type="text/css">
+    <script src="/assets/js/jquery-3.1.1.min.js"></script>
+    <script src="/bootsrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/vue.min.js"></script>
+</head>
+<body class="main-judge-bg">
+<div class="main-judge-container">
+    <!--<div class="pull-left" id="question">-->
+    <div id="question">
+        <div class="bg-white" id="question-msg">
+            <h1 class="text-center">必答题 - {{ type }}</h1>
+            <div class="div-height">
+                <span>题型： {{ type }}</span>
+                <span class="span-setting">分值： {{ score }}</span>
+                <span>时间：<span id="span-time" class="font">{{ time }}</span></span>
+            </div>
+            <span class="clearfix"></span>
+        </div>
+        <div id="question-title">
+            <p align="left">{{ id }}、{{ title }}</p>
+        </div>
+        <div id="question-option" >
+            <div class="judge-question-option" v-if="type !='单选题'&&type !='多选题'">
+                <p class="msg">{{ result }}</p>
+            </div>
+            <div v-if="type !='判断题'&&type !='简答题'&&type !=null">
+                <ul class="left" id="u">
+                    <li class="question-option-choice" id="l1">A、{{ option1 }}</li>
+                    <li class="question-option-choice" id="l2">B、{{ option2 }}</li>
+                    <li class="question-option-choice" id="l3">C、{{ option3 }}</li>
+                    <li class="question-option-choice" id="l4">D、{{ option4 }}</li>
+                </ul>
+            </div>
+            <div class="col-sm-12 next-question" style="margin-bottom: 10px; padding-left: 20px">
+                <button class="btn btn-lg btn-left" id="read">读题</button>
+                <input class="btn btn-lg btn-left" type="button" id="time-btn" value="开始计时"/>
+                <button class="btn btn-lg btn-left" id="answer">答案</button>
+                <button class="btn btn-lg btn-left" id="count">计分</button>
+                <button class="btn btn-lg btn-left" id="next-btn">下一题</button>
+                <button class="btn btn-lg btn-left" id="main-btn">返回</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " id="post-answer-tool" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-center">提交结果</h3>
+            </div>
+            <div class="modal-body">
+                <div class="col-sm-6">
+                    <button class="btn btn-info btn-lg button" id="submit-right-btn">正确</button>
+                </div>
+                <div class="col-sm-6">
+                    <button class="btn btn-lg button" id="submit-wrong-btn">错误</button>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 语音 -->
+<div id="bdtts_div_id">
+    <audio id="tts_autio_id">
+        <source id="tts_source_id" src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=9&text=播报内容" type="audio/mpeg">
+        <embed id="tts_embed_id" height="0" width="0" src="">
+    </audio>
+</div>
+</body>
+</html>
+
+<script>
+
+    $(function () {
+
+        var question = new Vue({
+            el : "#question",
+            data : {
+                id:'',
+                type : '',
+                score : '',
+                title : '',
+                option1:'',
+                option2:'',
+                option3:'',
+                option4:'',
+                result:'',
+                time:'',
+                result_temp:'',
+            },
+            methods : {
+                //获取题目
+                getQuestion : function () {
+                    var question = this;
+                    $.getJSON("/question/getOneQuestion", function (result) {
+                        if(result!=null){
+                            question.id = result.id;
+                            question.result='';
+                            question.title = result.title;
+                            question.score = result.score;
+                            question.type = result.type;
+                            question.option1 = result.option1;
+                            question.option2 = result.option2;
+                            question.option3 = result.option3;
+                            question.option4 = result.option4;
+                            question.result_temp = result.result;
+                            question.time = result.time;
+                            $('#span-time').html(question.time);
+                        }
+                    });
+                },
+                //获取答案
+                getAnswer : function(){
+                    question.result=question.result_temp;
+                    //判断题型
+                    if(question.type=='单选题'||question.type=='多选题'){
+                        //定义一个RegExp对象
+                        var a = new RegExp("A");
+                        var b = new RegExp("B");
+                        var c = new RegExp("C");
+                        var d = new RegExp("D");
+                        //判断a是否存在于question.result中
+                        if(a.test(question.result)){
+                            $("#u #l1").addClass("question-option-choice-active");
+                        }
+                        if(b.test(question.result)){
+                            $("#u #l2").addClass("question-option-choice-active");
+                        }
+                        if(c.test(question.result)){
+                            $("#u #l3").addClass("question-option-choice-active");
+                        }
+                        if(d.test(question.result)){
+                            $("#u #l4").addClass("question-option-choice-active");
+                        }
+                    }
+                },
+                //倒计时
+                updateTime : function (){
+                    question.time--;
+                    $('#span-time').html(question.time);
+                    if(question.time==5){
+                        //播放倒计时音效
+                        audio2.play();
+                    }
+                    if(question.time<=0){
+                        clearInterval(timer);
+                        return;
+                    }
+                }
+            }
+        });
+
+        //页面开始，填充题目
+        question.getQuestion();
+
+        //返回必答题主页
+        $("#main-btn").click(function(){
+            window.location.href = "/webSystem/required/required_index.html";
+        });
+
+        //下一道题
+        $("#next-btn").click(function() {
+            //移除答案的样式
+            $("#l1,#l2,#l3,#l4").removeClass("question-option-choice-active");
+            //清除计时器
+            clearInterval(timer);
+            //
+            document.getElementById("time-btn").value="开始计时";
+            question.getQuestion();
+        });
+
+        $("#answer").click(function(){
+            question.getAnswer();
+        });
+
+        var timer=null;
+        $("#time-btn").click(function(){
+            this.value=="开始计时"?(timer=setInterval(question.updateTime,1000),this.value="结束计时"):(clearInterval(timer),this.value="开始计时");
+        });
+
+        //5秒倒计时
+        var strAudio2="<audio id='audioPlay2' src='/assets/sound/5_seconds.mp3' hidden='true'>";
+        $("body").append(strAudio2);
+        var audio2=document.getElementById("audioPlay2");
+
+        //计分
+        $("#count").click(function(){
+            $("#post-answer-tool").modal("show");
+        });
+        //正确
+        $("#submit-right-btn").click(function(){
+            submitAnswer("right");
+        });
+        //错误
+        $("#submit-wrong-btn").click(function(){
+            submitAnswer("wrong");
+        });
+
+        //是否回答正确
+        var submitAnswer = function(answer){
+            $.ajax({
+                url:"/question/count",
+                method:"POST",
+                data:{
+                    //哪一道题
+                    titleId : question.id,
+                    answer : answer,
+                    score : question.score,
+                    type : question.type
+                },
+                success:function(result){
+                    console.log("计分情况："+result);
+                    //提交完毕，隐藏悬浮框
+                    $("#post-answer-tool").modal("hide");
+                }
+            })
+        }
+
+        //读题目
+        function doTTS(){
+            var ttsDiv = document.getElementById('bdtts_div_id');
+            var ttsAudio = document.getElementById('tts_autio_id');
+            var ttsText = question.title;
+
+            // 这样就可实现播放内容的替换了
+            ttsDiv.removeChild(ttsAudio);
+
+            var au1 = '<audio id="tts_autio_id" autoplay="autoplay">';
+            var sss = '<source id="tts_source_id" src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=4&text='+ttsText+'" type="audio/mpeg">';
+            var eee = '<embed id="tts_embed_id" height="0" width="0" src="">';
+            var au2 = '</audio>';
+            ttsDiv.innerHTML = au1 + sss + eee + au2;
+
+            ttsAudio = document.getElementById('tts_autio_id');
+
+            ttsAudio.play();
+        }
+
+        $("#read").click(function(){
+            doTTS();
+        });
+
+    })
+
+</script>

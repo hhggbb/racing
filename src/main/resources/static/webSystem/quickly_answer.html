@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="full-screen" content="yes">
+    <title>抢答题</title>
+    <link href="/bootsrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/pc-style.css" rel="stylesheet" type="text/css">
+    <script src="/assets/js/jquery-3.1.1.min.js"></script>
+    <script src="/bootsrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/vue.min.js"></script>
+</head>
+<body class="main-judge-bg">
+<div class="main-judge-container">
+
+    <div id="question" class="pull-left">
+        <div class="bg-white" id="question-msg">
+            <h1 class="text-center">抢答题</h1>
+            <div class="div-height">
+                <span>题型： {{ type }}</span>
+                <span class="span-setting">分值： {{ score }}</span>
+                <span>时间：<span id="span-time" class="font">{{ time }}</span></span>
+            </div>
+            <span class="clearfix"></span>
+        </div>
+        <div id="question-title">
+            <p align="left">{{ id }}、{{ title }}</p>
+        </div>
+        <div id="question-option">
+            <div class="judge-question-option" v-if="type !='单选题'&&type !='多选题'">
+                <p class="msg">{{ result }}</p>
+            </div>
+            <div v-if="type !='判断题'&&type !='简答题'&&type !=null">
+                <ul class="left" id="u">
+                    <li class="question-option-choice" id="l1">A、{{ option1 }}</li>
+                    <li class="question-option-choice" id="l2">B、{{ option2 }}</li>
+                    <li class="question-option-choice" id="l3">C、{{ option3 }}</li>
+                    <li class="question-option-choice" id="l4">D、{{ option4 }}</li>
+                </ul>
+            </div>
+            <div class="col-sm-12 next-question" style="margin-bottom: 10px; padding-left: 20px">
+                <button class="btn btn-lg btn-left" id="read">读题</button>
+                <button class="btn btn-lg btn-left" id="start-answering">开始抢答</button>
+                <input class="btn btn-lg btn-left" type="button" id="time-btn" value="开始计时"/>
+                <button class="btn btn-lg btn-left" id="answer">答案</button>
+                <button class="btn btn-lg btn-left" id="next-btn">下一题</button>
+                <button class="btn btn-lg btn-left" id="main-btn">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pull-right" id="r-side">
+        <div id="answerer">
+            答题者：<br>
+            <p class="text-center" style="font-size: 30px;">{{ answerName }}</p>
+        </div>
+        <div id="message-title">
+            <h4 class="text-center">消息栏</h4>
+        </div>
+        <div id="message">
+            <ul class="ul-class">
+                <!--<li class="text-center">欢迎参加学生党知识竞赛决赛.</li>-->
+                <li>现在是抢答题环节.</li>
+                <li>请各参赛者进入系统.</li>
+                <li v-for="team in teamList">
+                    {{ team }}进入系统
+                </li>
+            </ul>
+        </div>
+        <table class="table text-center" id="ranking-list">
+            <thead>
+            <tr>
+                <th colspan="3">小组名</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="team in teamList">
+                <td>{{ team }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="message-box" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-center">{{ title }}</h3>
+                </div>
+                <div class="modal-body text-center">
+                    <h2 class="text-center">{{ message }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 语音 -->
+    <div id="bdtts_div_id">
+        <audio id="tts_autio_id">
+            <source id="tts_source_id" src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=9&text=播报内容" type="audio/mpeg">
+            <embed id="tts_embed_id" height="0" width="0" src="">
+        </audio>
+    </div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+<script>
+
+    $(function () {
+
+        var question = new Vue({
+            el : "#question",
+            data : {
+                id : '',
+                type : "未加载",
+                score : 0,
+                title : '',
+                option1:'',
+                option2:'',
+                option3:'',
+                option4:'',
+                result:'',
+                time:'',
+                result_temp:'',
+            },
+            methods : {
+                //获取题目
+                getQuestion : function () {
+                    var question = this;
+                    $.getJSON("/question/getOneQuestion", function (result) {
+                        if(result!=null){
+                            question.id = result.id;
+                            question.result='';
+                            question.title = result.title;
+                            question.score = result.score;
+                            question.type = result.type;
+                            question.option1 = result.option1;
+                            question.option2 = result.option2;
+                            question.option3 = result.option3;
+                            question.option4 = result.option4;
+                            question.result_temp = result.result;
+                            question.time = result.time;
+                            $('#span-time').html(question.time);
+                        }
+                    });
+                },
+                //获取答案
+                getAnswer : function(){
+                    question.result=question.result_temp;
+                    //判断题型
+                    if(question.type=='单选题'||question.type=='多选题'){
+                        //定义一个RegExp对象
+                        var a = new RegExp("A");
+                        var b = new RegExp("B");
+                        var c = new RegExp("C");
+                        var d = new RegExp("D");
+                        //判断a是否存在于question.result中
+                        if(a.test(question.result)){
+                            $("#u #l1").addClass("question-option-choice-active");
+                        }
+                        if(b.test(question.result)){
+                            $("#u #l2").addClass("question-option-choice-active");
+                        }
+                        if(c.test(question.result)){
+                            $("#u #l3").addClass("question-option-choice-active");
+                        }
+                        if(d.test(question.result)){
+                            $("#u #l4").addClass("question-option-choice-active");
+                        }
+                    }
+                },
+                //倒计时
+                updateTime : function (){
+                    question.time--;
+                    $('#span-time').html(question.time);
+                    if(question.time==5){
+                        //播放倒计时音效
+                        audio2.play();
+                    }
+                    if(question.time<=0){
+                        clearInterval(timer);
+                        return;
+                    }
+                }
+            }
+        });
+
+        //页面开始，填充题目
+        question.getQuestion();
+
+        $("#main-btn").click(function(){
+            window.location.href = "/webSystem/main.html";
+        });
+
+        //下一道题
+        $("#next-btn").click(function() {
+            clearInterval(timer);
+            document.getElementById("time-btn").value="开始计时";
+            //点击下一道，清空当前答题者和犯规者
+            $.ajax({
+                url : "/answer2/clearCurrentName",
+                data : {},
+                success : function (data) {
+                    console.log(data.msg);
+                }
+            })
+            //清空定时器和答题者
+            clearInterval(timer2);
+            message.answerName='';
+            //标记答题结束 false
+            $.ajax({
+                url : "/answer2/stopAnswer",
+                type:"POST",
+                success : function (result) {
+                    console.log("result:"+result);
+                }
+            })
+            //开始获取犯规者
+            messageBox.getFoulName();
+            //移除答案的样式
+            $("#u #l1,#l2,#l3,#l4").removeClass("question-option-choice-active");
+            //获取下一道题目
+            question.getQuestion();
+        });
+
+        $("#answer").click(function(){
+            question.getAnswer();
+        });
+
+        var timer=null;
+        $("#time-btn").click(function(){
+            this.value=="开始计时"?(timer=setInterval(question.updateTime,1000),this.value="结束计时"):(clearInterval(timer),this.value="开始计时");
+        });
+
+
+        /**
+            右边消息栏
+        */
+        var timer2=null;
+        var message=new Vue({
+            el : "#r-side",
+            data:{
+                teamList:[ ],
+                answerName:''
+            },
+            methods:{
+                getTeamList : function(){
+                    $.getJSON("/answer2/getTeamList",function(result){
+                        if(result!=null){
+                            //不要用this.属性
+                            message.teamList=result;
+                        }
+                    })
+                },
+                getAnswerer : function () {
+                    timer2 = setInterval(function () {
+                        $.getJSON("/answer2/getAnswer", function (result) {
+                            if(result.status==101) {
+                                message.answerName = "正在获取..."
+                            } else {
+                                message.answerName = result.msg;
+                                clearInterval(timer2);
+                            }
+                        })
+                    }, 100);
+                }
+            }
+        });
+        //页面开始，加载参赛队伍
+        var timer2=setInterval(message.getTeamList,1000);
+
+        //开始答题按钮
+        $("#start-answering").click(function(){
+            //播放背景音乐
+            audio.play();
+            //清除获取参赛者的定时器
+            clearInterval(timer2);
+            message.getAnswerer();
+            //标记开始答题
+            $.ajax({
+                url : "/answer2/startAnswer",
+                type:"POST",
+                success : function (result) {
+                    console.log("result:"+result);
+                }
+            })
+        })
+
+        //提示的悬浮框
+        var messageBox=new Vue({
+            el:"#message-box",
+            data:{
+                title:'',
+                message:""
+            },
+            methods:{
+                //获取犯规者名字
+                getFoulName : function(){
+                    var b=setInterval(function(){
+                        $.getJSON("/answer2/getFoulName",function(result){
+                            //无犯规者
+                            if(result.status==101){
+
+                            }
+                            //有犯规者
+                            if(result.status==100){
+                                messageBox.title="有选手犯规";
+                                messageBox.message="犯规者："+result.msg;
+                                //弹出提示悬浮框
+                                $("#message-box").modal("show");
+                                clearInterval(b);
+                            }
+                        })
+                    },100)
+                }
+            }
+        })
+        //开始获取犯规者
+        messageBox.getFoulName();
+
+        //背景音乐
+        //非IE内核浏览器
+        //请抢答
+        var strAudio = "<audio id='audioPlay' src='/assets/sound/please_answer.wav' hidden='true'>";
+        $( "body" ).append( strAudio );
+        var audio = document.getElementById( "audioPlay" );
+
+        //5秒倒计时背乐
+        var strAudio2="<audio id='audioPlay2' src='/assets/sound/5_seconds.mp3' hidden='true'/>";
+        $("body").append(strAudio2);
+        var audio2=document.getElementById("audioPlay2");
+
+        //读题目
+        function doTTS(){
+            var ttsDiv = document.getElementById('bdtts_div_id');
+            var ttsAudio = document.getElementById('tts_autio_id');
+            var ttsText = question.title;
+
+            // 这样就可实现播放内容的替换了
+            ttsDiv.removeChild(ttsAudio);
+
+            var au1 = '<audio id="tts_autio_id" autoplay="autoplay">';
+            var sss = '<source id="tts_source_id" src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=4&text='+ttsText+'" type="audio/mpeg">';
+            var eee = '<embed id="tts_embed_id" height="0" width="0" src="">';
+            var au2 = '</audio>';
+            ttsDiv.innerHTML = au1 + sss + eee + au2;
+
+            ttsAudio = document.getElementById('tts_autio_id');
+
+            ttsAudio.play();
+        }
+
+        $("#read").click(function(){
+            doTTS();
+        });
+    })
+
+
+
+</script>
